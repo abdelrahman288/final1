@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Abdou-Luncher</string>
+    <string name="guard_name">Abdou-Luncher</string>
+    <string name="guard_desc">يفتح Abdou-Luncher بدل الواجهة الرسمية عند ضغط زر Home وعند تشغيل الشاشة، ويطفّي الشاشة فعلياً من زر التطبيق. لا يقرأ أي محتوى من الشاشة ولا يتصل بالإنترنت.</string>
+</resources>
