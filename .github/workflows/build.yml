@@ -1,0 +1,45 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Fetch bismillah audio (optional)
+        continue-on-error: true
+        run: |
+          mkdir -p app/src/main/assets
+          if [ ! -s app/src/main/assets/bismillah.mp3 ]; then
+            for u in \
+              "https://everyayah.com/data/Alafasy_128kbps/001001.mp3" \
+              "https://www.everyayah.com/data/Alafasy_128kbps/001001.mp3" \
+              "https://everyayah.com/data/Alafasy_64kbps/001001.mp3"; do
+              curl -fsSL --max-time 60 -o /tmp/b.mp3 "$u" || continue
+              if [ "$(stat -c%s /tmp/b.mp3)" -gt 5000 ]; then cp /tmp/b.mp3 app/src/main/assets/bismillah.mp3; echo "got $u"; break; fi
+            done
+          fi
+          ls -l app/src/main/assets/bismillah.mp3 || echo "NO bismillah audio"
+
+      - name: Build release APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon --stacktrace
+
+      - name: Rename APK
+        run: cp app/build/outputs/apk/release/app-release.apk Abdou-Luncher.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Abdou-Luncher-APK
+          path: Abdou-Luncher.apk
